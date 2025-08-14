@@ -199,13 +199,13 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Regi
                 className="relative p-8 bg-gradient-to-r from-purple-600 via-pink-600 to-red-500 text-white"
                 variants={itemVariants}
               >
-                <button
+                {/* <button
                   onClick={handleClose}
                   disabled={registerMutation.isPending}
                   className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-colors disabled:opacity-50"
                 >
                   <X size={20} />
-                </button>
+                </button> */}
 
                 <motion.div 
                   className="text-center"
@@ -369,7 +369,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Regi
                       </motion.div>
                     )}
 
-                    {step === 3 && (
+                    {/* {step === 3 && (
                       <motion.div
                         key="step3"
                         variants={stepVariants}
@@ -411,7 +411,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Regi
                           </div>
                         </motion.div>
                       </motion.div>
-                    )}
+                    )} */}
                   </AnimatePresence>
 
                   {/* Navigation buttons */}
