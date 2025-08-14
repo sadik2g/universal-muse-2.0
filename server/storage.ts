@@ -237,11 +237,11 @@ export class DatabaseStorage implements IStorage {
     return contest;
   }
 
-  async getContestById(id: string): Promise<Contest | undefined> {
-    const contestId = parseInt(id);
-    if (isNaN(contestId)) return undefined;
-    return this.getContest(contestId);
-  }
+  // async getContestById(id: string): Promise<Contest | undefined> {
+  //   const contestId = parseInt(id);
+  //   if (isNaN(contestId)) return undefined;
+  //   return this.getContest(contestId);
+  // }
 
   async getAllContests(): Promise<Contest[]> {
     return db.select().from(contests)
@@ -787,7 +787,7 @@ export class DatabaseStorage implements IStorage {
     const [contest] = await db.select().from(contests).where(eq(contests.id, id));
     return contest;
   }
-
+ 
   async updateSubmissionStatus(submissionId: string, status: string, modelId?: string): Promise<any> {
     const id = parseInt(submissionId);
 
