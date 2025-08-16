@@ -13,7 +13,7 @@ import { desc, eq, sql } from "drizzle-orm";
 import Stripe from "stripe";
 import { db } from "./db";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_51NLQZGBKoaPytA6MAfUfzE2TCDqSTyuKQ09WeqWaGdAHMmQajN46rhByQYencihzGluT1unfxXJZMMKDkAGMA8Gj00XsLqjQWG" as string, {
   apiVersion: "2025-07-30.basil",
 });
 
