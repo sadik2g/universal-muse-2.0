@@ -13,13 +13,9 @@ import { desc, eq, sql } from "drizzle-orm";
 import Stripe from "stripe";
 import { db } from "./db";
 
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-//   apiVersion: "2025-07-30.basil",
-// });
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-08-16",
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2025-07-30.basil",
 });
-
 
 export function setupWebhookRoute(app: express.Express) {
   app.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
