@@ -4,4 +4,3 @@ dist
 vite.config.ts.*
 *.tar.gz
 .env
-./uploads
