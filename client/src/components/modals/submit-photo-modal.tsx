@@ -12,6 +12,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { Label } from "recharts";
+import { ASSETS_URL } from "@/var";
 
 const submitPhotoSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -167,7 +168,7 @@ export default function SubmitPhotoModal({ isOpen, onClose, contest }: SubmitPho
                 {uploadedFile ? (
                   <div className="space-y-2">
                     <img
-                      src={`${"http://localhost:5000"}${uploadedFile}`}
+                      src={`${ASSETS_URL}${uploadedFile}`}
                       alt="Banner preview"
                       className="w-full h-32 object-cover rounded-lg"
                     />

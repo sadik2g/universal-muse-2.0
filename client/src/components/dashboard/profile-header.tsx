@@ -14,6 +14,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import { ASSETS_URL } from "@/var";
 
 export default function ProfileHeader() {
   const { model, isAuthenticated, isLoading } = useAuth();
@@ -108,7 +109,7 @@ export default function ProfileHeader() {
           >
             <Avatar className="w-10 h-10 border-2 border-purple-200">
               <AvatarImage 
-            src={`${"http://localhost:5000"}${model?.profileImage}`}
+            src={`${ASSETS_URL}${model?.profileImage}`}
                 alt={model.name}
                 className="object-cover"
               />

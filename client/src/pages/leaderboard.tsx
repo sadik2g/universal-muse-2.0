@@ -8,6 +8,7 @@ import { Trophy, Crown, Medal, Award, Search, Users, Star, Zap } from "lucide-re
 import VoteButton from "@/components/ui/vote-button";
 import AnimatedCounter from "@/components/ui/animated-counter";
 import { fadeInUp, staggerChildren, cardHoverAnimation } from "@/lib/animations";
+import { ASSETS_URL } from "@/var";
 
 export default function Leaderboard() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -179,7 +180,7 @@ export default function Leaderboard() {
                           2
                         </div>
                         <img
-                          src={`${"http://localhost:5000"}${topThree[1].profileImage}`}
+                          src={`${ASSETS_URL}${topThree[1].profileImage}`}
                           alt={`${topThree[1].name} portrait`}
                           className={`${getRankSize(2)} rounded-full mx-auto mb-4 border-4 border-gray-300 object-cover`}
                         />
@@ -211,7 +212,7 @@ export default function Leaderboard() {
                           <Crown />
                         </motion.div>
                         <img
-                          src={`${"http://localhost:5000"}${topThree[0].profileImage}`}
+                          src={`${ASSETS_URL}${topThree[0].profileImage}`}
                           alt={`${topThree[0].name} portrait`}
                           className={`${getRankSize(1)} rounded-full mx-auto mb-4 border-4 border-amber-400 object-cover`}
                         />
@@ -239,7 +240,7 @@ export default function Leaderboard() {
                           3
                         </div>
                         <img
-                          src={`${"http://localhost:5000"}${topThree[2].profileImage}`}
+                          src={`${ASSETS_URL}${topThree[2].profileImage}`}
                           alt={`${topThree[2].name} portrait`}
                           className={`${getRankSize(3)} rounded-full mx-auto mb-4 border-4 border-orange-600 object-cover`}
                         />
@@ -292,7 +293,7 @@ export default function Leaderboard() {
 
                       <div className="text-center mb-4">
                         <img
-                          src={`${"http://localhost:5000"}${winnerData.winner.profileImage}`}
+                          src={`${ASSETS_URL}${winnerData.winner.profileImage}`}
                           alt={winnerData.winner.name}
                           className="w-20 h-20 rounded-full mx-auto mb-3 border-4 border-yellow-400 object-cover"
                         />

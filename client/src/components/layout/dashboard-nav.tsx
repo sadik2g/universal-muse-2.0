@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
+import { ASSETS_URL } from "@/var";
 
 export default function DashboardNav() {
   const [location] = useLocation();
@@ -62,7 +63,7 @@ export default function DashboardNav() {
       <div className="mb-8">
         <div className="flex items-center space-x-3 mb-4">
           <img
-            src={`${"http://localhost:5000"}${model?.profileImage}`}
+            src={`${ASSETS_URL}${model?.profileImage}`}
             alt={model?.name || "Profile"}
             className="w-12 h-12 rounded-full object-cover"
           />

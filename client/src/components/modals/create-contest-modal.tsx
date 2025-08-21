@@ -13,6 +13,7 @@ import { Calendar, Trophy, DollarSign, Users, Clock, Upload, X } from "lucide-re
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { ASSETS_URL } from "@/var";
 
 const createContestFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -225,7 +226,7 @@ export default function CreateContestModal({ isOpen, onClose }: CreateContestMod
                   {uploadedImageUrl ? (
                     <div className="space-y-2">
                       <img
-                        src={`${"http://localhost:5000"}${uploadedImageUrl}`}
+                        src={`${ASSETS_URL}${uploadedImageUrl}`}
                         alt="Banner preview"
                         className="w-full h-32 object-cover rounded-lg"
                       />

@@ -19,6 +19,7 @@ import {
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Pagination } from "@/components/ui/pagination";
+import { ASSETS_URL } from "@/var";
 
 interface PendingSubmission {
   id: string;
@@ -325,7 +326,7 @@ export default function AdminModerate() {
                     <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300">
                       <div className="relative">
                         <img
-                          src={`${"http://localhost:5000"}${submission.photoUrl}`}
+                          src={`${ASSETS_URL}${submission.photoUrl}`}
                           alt={`Submission by ${submission.modelName}`}
                           className="w-full h-48 object-cover"
                         />

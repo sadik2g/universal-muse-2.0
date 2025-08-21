@@ -9,6 +9,7 @@ import CountdownTimer from "@/components/ui/countdown-timer";
 import ModelCard from "@/components/ui/model-card";
 import AnimatedCounter from "@/components/ui/animated-counter";
 import { fadeInUp, staggerChildren, floatingAnimation } from "@/lib/animations";
+import { ASSETS_URL } from "@/var";
 
 export default function Home() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -268,7 +269,7 @@ export default function Home() {
                 viewport={{ once: true }}
               >
                 <img
-                  src={`${"http://localhost:5000"}${featuredContest.image}`}
+                  src={`${ASSETS_URL}${featuredContest.image}`}
                   alt="Fashion runway contest banner"
                   className="rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500"
                 />

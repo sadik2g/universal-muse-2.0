@@ -5,6 +5,7 @@ import { Link } from "wouter";
 import { Calendar, Trophy, Users } from "lucide-react";
 import { cardHoverAnimation } from "@/lib/animations";
 import type { Contest } from "@shared/schema";
+import { ASSETS_URL } from "@/var";
 
 interface ContestCardProps {
   contest: Contest;
@@ -38,7 +39,7 @@ export default function ContestCard({ contest, className = "" }: ContestCardProp
     >
       <div className="relative">
         <motion.img
-          src={`${"http://localhost:5000"}${contest.bannerImage}`}
+          src={`${ASSETS_URL}${contest.bannerImage}`}
           alt={`${contest.title} banner`}
           className="w-full h-48 object-cover"
           whileHover={{ scale: 1.05 }}
