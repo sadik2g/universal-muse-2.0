@@ -4,6 +4,7 @@ import { Trophy, Medal, Award } from "lucide-react";
 import VoteButton from "./vote-button";
 import { cardHoverAnimation } from "@/lib/animations";
 import type { Model } from "@shared/schema";
+import { ASSETS_URL } from "@/var";
 
 interface ModelCardProps {
   model: Model;
@@ -71,7 +72,7 @@ export default function ModelCard({
 
       <div className="relative">
         <motion.img
-          src={`http://localhost:5000${model.profileImage}`}
+          src={`${ASSETS_URL}${model.profileImage}`}
           alt={`${model.name} portrait`}
           className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700"
           whileHover={{ scale: 1.1 }}
