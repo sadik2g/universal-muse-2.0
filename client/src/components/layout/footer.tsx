@@ -125,7 +125,7 @@ export default function Footer() {
           transition={{ delay: 0.5, duration: 0.6 }}
         >
           <p className="text-gray-400">
-            &copy; 2024 Universal Muse. All rights reserved. Made with ❤️ for the modeling community.
+            &copy; {new Date().getFullYear()} Universal Muse. All rights reserved. Made with ❤️ for the modeling community.
           </p>
         </motion.div>
       </div>
