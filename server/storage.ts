@@ -220,9 +220,11 @@ export class DatabaseStorage implements IStorage {
 
   async getTopModels(limit: number = 10): Promise<Model[]> {
     return db.select().from(models)
-      .where(eq(models.isActive, true))
+      .innerJoin(users, eq(models.userId, users.id))
+      .where(and(eq(models.isActive, true), eq(users.userType, 'model')))
       .orderBy(desc(models.totalVotes))
-      .limit(limit);
+      .limit(limit)
+      .then((results: any[]) => results.map((r) => r.models));
   }
 
   async updateModelVotes(id: number, votes: number, allVotes: number): Promise<void> {

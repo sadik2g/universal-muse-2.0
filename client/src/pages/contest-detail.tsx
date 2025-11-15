@@ -58,6 +58,7 @@ export default function ContestDetail() {
 
   const { contest, entries } = contestData;
   const isActive = new Date(contest.endDate) > new Date();
+  const participantsCount = entries?.length || 0;
 
   const filteredAndSortedEntries = entries
     ?.filter((entry: any) => 
@@ -134,7 +135,7 @@ export default function ContestDetail() {
                   <Users className="text-white text-2xl" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Participants</h3>
-                <p className="text-gray-300">{isNaN(contest.entryCount) ? 0 : (contest.entryCount || 0)}</p>
+                <p className="text-gray-300">{participantsCount}</p>
               </div>
               
               <div className="text-center">
