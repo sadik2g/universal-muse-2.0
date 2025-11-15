@@ -88,7 +88,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Regi
   };
 
   const nextStep = () => {
-    if (step < 3) setStep(step + 1);
+    if (step < 2) setStep(step + 1);
   };
 
   const prevStep = () => {
@@ -222,7 +222,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Regi
                   className="flex justify-center mt-6 space-x-2"
                   variants={itemVariants}
                 >
-                  {[1, 2, 3].map((stepNum) => (
+                  {[1, 2].map((stepNum) => (
                     <motion.div
                       key={stepNum}
                       className={`w-3 h-3 rounded-full transition-all duration-300 ${
@@ -368,50 +368,6 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Regi
                         </motion.div>
                       </motion.div>
                     )}
-
-                    {/* {step === 3 && (
-                      <motion.div
-                        key="step3"
-                        variants={stepVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        className="space-y-6"
-                      >
-                        <motion.div variants={itemVariants}>
-                          <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-                            Final Details
-                          </h3>
-                        </motion.div>
-
-                        <motion.div variants={itemVariants} className="space-y-4">
-                          <div>
-                            <Label htmlFor="instagramHandle" className="text-gray-700 font-medium">
-                              Instagram Handle (Optional)
-                            </Label>
-                            <Input
-                              id="instagramHandle"
-                              {...register("instagramHandle")}
-                              placeholder="@username"
-                              className="mt-2 border-2 border-purple-100 focus:border-purple-400 rounded-lg"
-                            />
-                          </div>
-
-                          <div>
-                            <Label htmlFor="bio" className="text-gray-700 font-medium">
-                              Bio (Optional)
-                            </Label>
-                            <Textarea
-                              id="bio"
-                              {...register("bio")}
-                              placeholder="Tell us about yourself, your experience, and interests..."
-                              className="mt-2 border-2 border-purple-100 focus:border-purple-400 rounded-lg resize-none"
-                              rows={4}
-                            />
-                          </div>
-                        </motion.div>
-                      </motion.div>
-                    )} */}
                   </AnimatePresence>
 
                   {/* Navigation buttons */}
@@ -431,7 +387,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Regi
                       </Button>
                     ) : <div />}
 
-                    {step < 3 ? (
+                    {step < 2 ? (
                       <Button
                         type="button"
                         onClick={nextStep}
