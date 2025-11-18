@@ -77,7 +77,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }: Regi
     onError: (error: any) => {
       toast({
         title: "Registration Failed",
-        description: error.message || "An error occurred during registration",
+        description: "An error occurred during registration. Please try again.",
         variant: "destructive",
       });
     },

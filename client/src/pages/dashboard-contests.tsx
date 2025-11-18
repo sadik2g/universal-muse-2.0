@@ -235,7 +235,7 @@ return (
                                 className="w-full mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                                 asChild
                               >
-                                <Link href={`dashboard/contests/${contest.id}`}>
+                                <Link href={`/dashboard/contests/${contest.id}`}>
                                   View Contest
                                 </Link>
                               </Button>

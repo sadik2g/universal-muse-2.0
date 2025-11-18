@@ -71,7 +71,6 @@ export default function WinnerCongratulationsModal({
       return await apiRequest("/api/prize-requests", {
         method: "POST",
         body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" },
       });
     },
     onSuccess: () => {
@@ -90,7 +89,7 @@ export default function WinnerCongratulationsModal({
     onError: (error: any) => {
       toast({
         title: "Request Failed",
-        description: error.message || "Failed to submit prize request. Please try again.",
+        description: "Failed to submit prize request. Please try again.",
         variant: "destructive",
       });
     },

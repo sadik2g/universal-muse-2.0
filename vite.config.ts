@@ -23,7 +23,7 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      "/api": "http://localhost:5000", // proxy API requests to Express
+      "/api": "http://localhost:9000", // proxy API requests to Express
     },
   },
 });

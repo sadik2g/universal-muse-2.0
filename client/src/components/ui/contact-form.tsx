@@ -63,7 +63,7 @@ export default function ContactForm({ onSuccess }: ContactFormProps) {
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to send message. Please try again.",
+        description: "Failed to send message. Please try again.",
         variant: "destructive",
       });
     },

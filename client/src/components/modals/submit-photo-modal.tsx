@@ -70,7 +70,7 @@ export default function SubmitPhotoModal({ isOpen, onClose, contest }: SubmitPho
       console.error("Photo submission error:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to submit photo",
+        description: "Failed to submit photo. Please try again.",
         variant: "destructive",
       });
     },
@@ -124,7 +124,7 @@ export default function SubmitPhotoModal({ isOpen, onClose, contest }: SubmitPho
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to upload image",
+        description: "Failed to upload image. Please try again.",
         variant: "destructive",
       });
     } finally {

@@ -33,7 +33,7 @@ export default function DeleteContestModal({ isOpen, onClose, contest }: DeleteC
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to delete contest",
+        description: "Failed to delete contest. Please try again.",
         variant: "destructive",
       });
     },

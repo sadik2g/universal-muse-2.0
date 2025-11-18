@@ -87,7 +87,7 @@ export default function AdminContests() {
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to set contest winner",
+        description: "Failed to set contest winner. Please try again.",
         variant: "destructive",
       });
     },

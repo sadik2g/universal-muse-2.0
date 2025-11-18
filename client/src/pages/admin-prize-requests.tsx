@@ -89,7 +89,6 @@ export default function AdminPrizeRequests() {
       return await apiRequest(`/api/admin/prize-requests/${id}`, {
         method: 'PUT',
         body: JSON.stringify({ status, adminNotes }),
-        headers: { 'Content-Type': 'application/json' },
       });
     },
     onSuccess: () => {
@@ -104,7 +103,7 @@ export default function AdminPrizeRequests() {
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to update prize request",
+        description: "Failed to update prize request. Please try again.",
         variant: "destructive",
       });
     },
@@ -229,7 +228,7 @@ export default function AdminPrizeRequests() {
           <motion.div variants={itemVariants}>
             {filteredRequests.length > 0 ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {filteredRequests.map((request, index) => (
+                {filteredRequests.map((request: PrizeRequest, index: number) => (
                   <motion.div
                     key={request.id}
                     initial={{ opacity: 0, y: 20 }}

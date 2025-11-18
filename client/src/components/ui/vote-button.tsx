@@ -84,7 +84,7 @@ export default function VoteButton({
     onError: (error: any) => {
       toast({
         title: "Vote Failed",
-        description: error.message || "Unable to cast vote at this time.",
+        description: "Unable to cast vote at this time. Please try again.",
         variant: "destructive",
       });
     },

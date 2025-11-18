@@ -5,13 +5,13 @@ import { useParams, useLocation } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Trophy, Users, Search, SortAsc, Camera } from "lucide-react";
+import { Calendar, Trophy, Users, Search, SortAsc, Camera, ArrowLeft } from "lucide-react";
 import CountdownTimer from "@/components/ui/countdown-timer";
 import PhotoSubmissionCard from "@/components/ui/photo-submission-card";
 import SubmitPhotoModal from "@/components/modals/submit-photo-modal";
-import DashboardNav from "@/components/layout/dashboard-nav";
 import { useAuth } from "@/hooks/useAuth";
 import { fadeInUp, staggerChildren } from "@/lib/animations";
+import { Link } from "wouter";
 
 export default function ContestDetail() {
   const { id } = useParams();
@@ -81,12 +81,23 @@ export default function ContestDetail() {
 
   return (
     <>
-      {/* Show dashboard nav if in dashboard context */}
-      {isDashboardContext && <DashboardNav />}
+      <div className="min-h-screen bg-gray-50">
+      {/* Back button for dashboard context */}
+      {isDashboardContext && (
+        <div className="bg-white border-b border-gray-200">
+          <div className="container mx-auto px-6 py-4">
+            <Link href="/dashboard">
+              <Button variant="ghost" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Dashboard
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
       
-      <div className={`min-h-screen ${isDashboardContext ? 'pt-8' : 'pt-24'} pb-20 bg-gray-50`}>
       {/* Contest Header */}
-      <section className="relative py-20 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 overflow-hidden">
+      <section className="relative py-12 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 overflow-hidden">
         <div className="absolute inset-0">
           <img
             src={contest.image}
@@ -181,7 +192,7 @@ export default function ContestDetail() {
 
       {/* Contest Entries - Hide for authenticated models */}
       {!(user && user.userType === "model") && (
-        <section className="py-20">
+        <section className="py-8">
           <div className="container mx-auto px-6">
           <motion.div
             className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4"
@@ -240,7 +251,7 @@ export default function ContestDetail() {
             </motion.div>
           ) : (
             <motion.div
-              className="text-center py-20"
+              className="text-center py-12"
               variants={fadeInUp}
               initial="initial"
               animate="animate"

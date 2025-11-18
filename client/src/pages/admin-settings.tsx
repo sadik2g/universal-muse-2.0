@@ -101,7 +101,7 @@ export default function AdminSettings() {
     onError: (error: any) => {
       toast({
         title: "Update failed",
-        description: error.message || "Failed to update profile",
+        description: "Failed to update profile. Please try again.",
         variant: "destructive",
       });
     },
@@ -124,7 +124,7 @@ export default function AdminSettings() {
     onError: (error: any) => {
       toast({
         title: "Password update failed",
-        description: error.message || "Failed to update password",
+        description: "Failed to update password. Please try again.",
         variant: "destructive",
       });
     },

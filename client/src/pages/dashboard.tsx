@@ -241,7 +241,6 @@ export default function Dashboard() {
             ))}
           </motion.div>
 
-          {/* Quick Actions */}
           {/* <motion.div
             className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
             variants={itemVariants}
@@ -249,7 +248,7 @@ export default function Dashboard() {
             {/* Upload Photo Button */}
           {/*             
               <motion.div
-              onClick={() => navigate("dashboard/contests")}
+              onClick={() => navigate("/dashboard/contests")}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="block"
@@ -277,7 +276,7 @@ export default function Dashboard() {
           {/* View Submissions Button */}
 
           {/* <motion.div
-              onClick={() => navigate("dashboard/mysubmissions")}
+              onClick={() => navigate("/dashboard/mysubmissions")}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="block"
@@ -455,7 +454,7 @@ export default function Dashboard() {
                                 className="w-full mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                                 asChild
                               >
-                                <Link href={`dashboard/contests/${contest.id}`}>
+                                <Link href={`/dashboard/contests/${contest.id}`}>
                                   View Contest
                                 </Link>
                               </Button>

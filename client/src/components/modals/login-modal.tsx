@@ -61,7 +61,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister }: Logi
     onError: (error: any) => {
       toast({
         title: "Login Failed",
-        description: error.message || "Invalid email or password. Please try again.",
+        description: "Invalid email or password. Please try again.",
         variant: "destructive",
       });
     },
