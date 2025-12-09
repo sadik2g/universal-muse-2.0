@@ -12,6 +12,34 @@ import express from "express";
 import { desc, eq, sql } from "drizzle-orm";
 import Stripe from "stripe";
 import { db } from "./db";
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Multer + Cloudinary storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'uploads', // folder in Cloudinary
+    format: async (req, file) => 'png', // change if you need dynamic types
+    public_id: (req, file) => file.originalname,
+  },
+});
+
+const upload = multer({ storage });
+
+// Upload route
+app.post('/upload', upload.single('image'), (req, res) => {
+  res.json({ url: req.file.path }); // Cloudinary URL
+});
+
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_51NLQZGBKoaPytA6MAfUfzE2TCDqSTyuKQ09WeqWaGdAHMmQajN46rhByQYencihzGluT1unfxXJZMMKDkAGMA8Gj00XsLqjQWG" as string, {
   apiVersion: "2025-07-30.basil",
