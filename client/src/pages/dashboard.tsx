@@ -162,6 +162,16 @@ export default function Dashboard() {
             className="mb-8"
             variants={itemVariants}
           >
+             {/* FIXED DATE + MARQUEE */}
+  <div className="mb-6">
+    <p className="text-sm text-gray-500">
+      {new Date().toLocaleString()}
+    </p>
+
+    <marquee className="text-purple-600 font-semibold mt-1">
+      🌟 Welcome back! New contests are now open — participate and win amazing prizes!
+    </marquee>
+  </div>
             <div className="text-center">
               <motion.h1
                 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4"

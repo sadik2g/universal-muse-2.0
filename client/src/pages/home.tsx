@@ -123,7 +123,7 @@ export default function Home() {
           >
             Join the ultimate modeling contest platform. Vote daily, discover talent, and watch your favorites climb the leaderboard.
           </motion.p>
-
+           
           <motion.div
             className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center px-4"
             variants={fadeInUp}
@@ -158,8 +158,31 @@ export default function Home() {
                 </div>
               </Link>
             </motion.div>
+            
+              <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="w-full sm:w-auto"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
+      >
+        <Link href="/buy-votes">
+          <div className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 sm:px-12 py-4 rounded-full text-lg font-bold shadow-lg hover:shadow-xl transform transition-all duration-300 cursor-pointer">
+            Buy Votes
+          </div>
+        </Link>
+      </motion.div>
           </motion.div>
+          
+    
+    
+      
+          
         </div>
+        
+
+
 
         {/* Scroll Indicator */}
         <motion.div

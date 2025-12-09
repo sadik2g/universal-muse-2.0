@@ -48,7 +48,7 @@ export default function ProfileHeader() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-4">
         <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse" />
         <div className="w-24 h-4 bg-gray-200 rounded animate-pulse" />
       </div>

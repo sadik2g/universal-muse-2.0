@@ -104,14 +104,17 @@ export default function AdminNav() {
       )}
 
       {/* Sidebar */}
-      <aside
-        className={`
-          fixed inset-y-0 left-0 z-40 bg-white shadow-lg border-r border-gray-200 transition-transform duration-300
-          w-80 xl:w-80
-          xl:translate-x-0
-          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'}
-        `}
-      >
+     <aside
+  className={`
+    fixed inset-y-0 left-0 z-40 bg-white shadow-lg border-r border-gray-200 
+    transition-transform duration-300
+    w-64 xl:w-80
+    overflow-y-auto
+    xl:translate-x-0
+    ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'}
+  `}
+>
+
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="p-6 border-b border-gray-200">
@@ -128,29 +131,32 @@ export default function AdminNav() {
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-            {adminNavItems.map((item) => {
-              const isActive = location === item.href || 
-                (item.href !== "/admin" && location.startsWith(item.href));
-              
-              return (
-                <Link key={item.href} href={item.href}>
-                  <div
-                    className={`
-                      flex items-center gap-3 p-3 rounded-lg transition-colors cursor-pointer
-                      ${isActive 
-                        ? 'bg-blue-50 text-blue-700 border border-blue-200' 
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                      }
-                    `}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    <span className="font-medium">{item.label}</span>
-                  </div>
-                </Link>
-              );
-            })}
-          </nav>
+  {adminNavItems.map((item) => {
+    const active =
+      location === item.href ||
+      (item.href !== "/admin" && location.startsWith(item.href));
+
+    return (
+      <Link key={item.href} href={item.href}>
+        <a
+          onClick={() => setIsMobileMenuOpen(false)}
+          className={`
+            flex items-center gap-3 p-3 rounded-lg transition-colors cursor-pointer
+            ${active
+              ? "bg-blue-50 text-blue-700 border border-blue-200"
+              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+            }
+          `}
+        >
+          <item.icon className="h-5 w-5" />
+          <span className="font-medium">{item.label}</span>
+        </a>
+      </Link>
+    );
+  })}
+</nav>
+
+
 
           {/* Logout Button */}
           <div className="p-4 border-t border-gray-200">
