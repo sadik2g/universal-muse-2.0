@@ -13,7 +13,9 @@ import { desc, eq, sql } from "drizzle-orm";
 import Stripe from "stripe";
 import { db } from "./db";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2020-08-27" });
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_51NLQZGBKoaPytA6MAfUfzE2TCDqSTyuKQ09WeqWaGdAHMmQajN46rhByQYencihzGluT1unfxXJZMMKDkAGMA8Gj00XsLqjQWG" as string, {
+  apiVersion: "2025-07-30.basil",
+});
 
 export function setupWebhookRoute(app: express.Express) {
   app.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
@@ -108,10 +110,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
   // Serve uploaded files
-  const uploadDir = path.join(__dirname, 'public', 'uploads');
-  //app.use('/uploads', express.static(uploadDir));
-  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
+  app.use('/uploads', express.static(uploadDir));
 
   // Configure session middleware
   app.use(session({
