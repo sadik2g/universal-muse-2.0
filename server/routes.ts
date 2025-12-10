@@ -11,6 +11,8 @@ import Stripe from "stripe";
 import { db } from "./db";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+import path from "path";
+import fs from "fs";
 
 const app = express();
 
@@ -34,11 +36,9 @@ const cloudStorage = new CloudinaryStorage({
 const upload = multer({ storage: cloudStorage });
 
 // Upload route
-app.post("/upload", upload.single("image"), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-
-  // req.file.path contains the Cloudinary URL
-  res.json({ imageUrl: req.file.path });
+app.post("/api/upload/profile", requireAuth, upload.single('image'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  res.json({ url: req.file?.path }); // Cloudinary URL
 });
 
 // Fetch submissions route
@@ -59,100 +59,20 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_51NLQZGBKoaP
   apiVersion: "2025-07-30.basil",
 });
 
-export function setupWebhookRoute(app: express.Express) {
-  app.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
-    const sig = req.headers["stripe-signature"];
-    let event;
-
-    if (typeof sig !== "string") {
-      console.error("Missing or invalid Stripe signature header");
-      return res.status(400).send("Missing or invalid Stripe signature header");
-    }
-
-    try {
-      event = stripe.webhooks.constructEvent(
-        req.body,
-        sig,
-        process.env.STRIPE_WEBHOOK_SECRET!
-      );
-    } catch (err: any) {
-      console.error("Webhook signature verification failed", err.message);
-      return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
-
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
-
-      if (!session.metadata) {
-        return res.status(400).send("Session metadata is missing");
-      }
-
-      const packageId = session.metadata.packageId;
-      const userId = session.metadata.userId;
-
-      const model = await storage.getModelByUserId(userId);
-      if (!model) return res.status(404).send("Model not found");
-
-      const activeContestEntry = await storage.getModelActiveContestEntry(model.id);
-      if (!activeContestEntry) return res.status(404).send("Active contest entry not found");
-
-      const packageDetails = getPackageDetails(packageId);
-      if (!packageDetails) return res.status(400).send("Invalid package ID");
-
-      const currentEntryVotes = activeContestEntry.votes || 0;
-      const newEntryVotes = currentEntryVotes + packageDetails.totalVotes;
-      await storage.updateContestEntryVotes(activeContestEntry.id, newEntryVotes);
-      const fullVotes = model.totalVotes || 0
-      const currentModelVotes = model.activeContestVotes || 0;
-      const newModelVotes = currentModelVotes + packageDetails.totalVotes;
-      await storage.updateModelVotes(model.id, newModelVotes, fullVotes);
-
-      console.log(`Votes updated for model ${model.id}`);
-    }
-
-    res.status(200).json({ received: true });
-  });
-}
 
 // Session middleware
 const PgSession = connectPg(session);
 
+const requireAuth = (req: any, res: any, next: any) => {
+  if (!req.session?.userId) return res.status(401).json({ message: "Authentication required" });
+  next();
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Configure multer for file uploads
-  const uploadDir = path.join(process.cwd(), 'uploads');
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
+ 
 
-  const upload = multer({
-    storage: multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, uploadDir);
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-      }
-    }),
-    fileFilter: (req, file, cb) => {
-      const allowedTypes = /jpeg|jpg|png|gif/;
-      const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-      const mimetype = allowedTypes.test(file.mimetype);
-
-      if (mimetype && extname) {
-        return cb(null, true);
-      } else {
-        cb(new Error('Only image files are allowed!'));
-      }
-    },
-    limits: {
-      fileSize: 5 * 1024 * 1024, // 5MB limit
-    }
-  });
-
-
-  // Serve uploaded files
-  app.use('/uploads', express.static(uploadDir));
+  
 
   // Configure session middleware
   app.use(session({
@@ -165,7 +85,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // Set to true in production with HTTPS
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     },
@@ -309,7 +229,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Return the URL path to the uploaded file
-      const fileUrl = `/uploads/${req.file.filename}`;
+     const fileUrl = req.file?.path;
       res.json({ url: fileUrl });
     } catch (error) {
       console.error("Upload error:", error);
@@ -317,19 +237,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/upload/profile", requireAuth, upload.single('image'), (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ error: 'No file uploaded' });
-      }
-      // Return the URL path to the uploaded file
-      const fileUrl = `/uploads/${req.file.filename}`;
-      res.json({ url: fileUrl });
-    } catch (error) {
-      console.error("Profile upload error:", error);
-      res.status(500).json({ error: 'Failed to upload profile picture' });
-    }
-  });
+
 
   // Profile update endpoint
   app.put("/api/profile/update", requireAuth, async (req, res) => {
@@ -718,7 +626,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Missing or invalid Stripe signature header");
       return res.status(400).send("Missing or invalid Stripe signature header");
     }
-    console.log("prcoess.env.STRIPE_WEBHOOK_SECRET", process.env.STRIPE_WEBHOOK_SECRET);
+    console.log("process.env.STRIPE_WEBHOOK_SECRET", process.env.STRIPE_WEBHOOK_SECRET);
     try {
       event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
     } catch (err: any) {
@@ -759,17 +667,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Submit contest entry
-  app.post("/api/contest-entries", requireAuth, async (req, res) => {
+  app.post("/api/contest-entries", requireAuth, upload.single('image'), async (req, res) => {
     try {
       console.log("Contest entry submission received:", req.body);
-      const { contestId, title, description, photoUrl } = req.body;
-      upload.single('image')
-      const fileUrl = `/uploads/${photoUrl}`;
-
-      if (!contestId || !title || !description || !photoUrl) {
-        console.log("Missing required fields:", { contestId, title, description, photoUrl });
-        return res.status(400).json({ message: "All fields are required" });
-      }
+      const { contestId, title, description, fileUrl } = req.body;
+      const fileUrl = req.file?.path;
+if (!contestId || !title || !description || !fileUrl) {
+  return res.status(400).json({ message: "All fields are required" });
+}
 
       // Get the model for the current user
       const userId = (req.session as any).userId;
@@ -1080,17 +985,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Contest winner routes
-  // app.post("/api/admin/contests/:id/set-winner", requireAdmin, async (req, res) => {
-  //   try {
-  //     const contestId = parseInt(req.params.id);
-  //     await storage.setContestWinner(contestId);
-  //     res.json({ message: "Contest winner set successfully" });
-  //   } catch (error) {
-  //     console.error("Set contest winner error:", error);
-  //     res.status(500).json({ message: "Failed to set contest winner" });
-  //   }
-  // });
 
   app.get("/api/contests/:id/winner", async (req, res) => {
     try {
