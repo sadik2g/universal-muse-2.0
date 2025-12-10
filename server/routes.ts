@@ -1,20 +1,18 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
 import { insertModelSchema, insertVoteSchema, insertContactSchema, registerModelSchema, createContestSchema, models, contests, contestEntries } from "@shared/schema";
 import { z } from "zod";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
 import express from "express";
 import { desc, eq, sql } from "drizzle-orm";
 import Stripe from "stripe";
 import { db } from "./db";
-import { v2 as cloudinary } from 'cloudinary';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 
+const app = express();
 
 // Configure Cloudinary
 cloudinary.config({
@@ -24,21 +22,37 @@ cloudinary.config({
 });
 
 // Multer + Cloudinary storage
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
+const cloudStorage = new CloudinaryStorage({
+  cloudinary,
   params: {
-    folder: 'uploads', // folder in Cloudinary
-    format: async (req, file) => 'png', // change if you need dynamic types
+    folder: "uploads", // folder in Cloudinary
+    format: async (req, file) => "png", // or dynamically detect
     public_id: (req, file) => file.originalname,
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage: cloudStorage });
 
 // Upload route
-app.post('/upload', upload.single('image'), (req, res) => {
-  res.json({ url: req.file.path }); // Cloudinary URL
+app.post("/upload", upload.single("image"), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+
+  // req.file.path contains the Cloudinary URL
+  res.json({ imageUrl: req.file.path });
 });
+
+// Fetch submissions route
+app.get("/submissions", async (req, res) => {
+  const submissions = await db.submissions.findMany();
+  const mapped = submissions.map((s) => ({
+    ...s,
+    imageUrl: s.imageUrl || s.localPath, // fallback if needed
+  }));
+  res.json(mapped);
+});
+
+export default app;
+
 
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_51NLQZGBKoaPytA6MAfUfzE2TCDqSTyuKQ09WeqWaGdAHMmQajN46rhByQYencihzGluT1unfxXJZMMKDkAGMA8Gj00XsLqjQWG" as string, {
