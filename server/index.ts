@@ -94,6 +94,11 @@ setupWebhookRoute(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+
+// Serve uploaded images from disk
+import path from "path";
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
 // API request logging
 app.use((req, res, next) => {
   const start = Date.now();
