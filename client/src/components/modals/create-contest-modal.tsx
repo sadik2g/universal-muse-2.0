@@ -130,39 +130,32 @@ export default function CreateContestModal({ isOpen, onClose }: CreateContestMod
       return;
     }
     setIsUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
+  try {
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("contestId", String(contestId));
 
-      const response = await fetch("/api/upload/banner", {
-        method: "POST",
-        body: formData,
-      });
+    const response = await fetch(`${API_URL}/contest-entries`, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
 
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
+    if (!response.ok) throw new Error("Upload failed");
 
-      const result = await response.json();
+    const result = await response.json();
 
-      const imageUrl = result.url;
-      setUploadedImageUrl(imageUrl);
-      form.setValue("bannerImage", imageUrl);
-
-      toast({
-        title: "Success",
-        description: "Banner image uploaded successfully",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: "Failed to upload image. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsUploading(false);
-    }
-  };
+    toast({ title: "Success", description: "Contest entry uploaded successfully" });
+    // Optionally, refresh entries
+    queryClient.invalidateQueries({ queryKey: ["/api/contests", contestId] });
+  } catch (error: any) {
+    toast({ title: "Error", description: error.message || "Failed to upload", variant: "destructive" });
+  } finally {
+    setIsUploading(false);
+  }
+};
 
   const onSubmit = (data: CreateContestForm) => {
     createContestMutation.mutate(data);
