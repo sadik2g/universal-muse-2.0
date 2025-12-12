@@ -276,18 +276,11 @@ app.use("/uploads", express.static(uploadDir));
     }
   });
 
- // Submit contest entry
-  app.post("/api/contest-entries", requireAuth, async (req, res) => {
-    try {
-      console.log("Contest entry submission received:", req.body);
-      const { contestId, title, description, photoUrl } = req.body;
-      upload.single('image')
-      const fileUrl = `/uploads/${photoUrl}`;
-
-      if (!contestId || !title || !description || !photoUrl) {
-        console.log("Missing required fields:", { contestId, title, description, photoUrl });
-        return res.status(400).json({ message: "All fields are required" });
-      }
+  app.post("/api/contest-entries", requireAuth, upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No image uploaded" });
+    }
 
     const userId = (req.session as any).userId;
     const { contestId, title, description } = req.body;
