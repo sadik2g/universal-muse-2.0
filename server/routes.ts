@@ -756,6 +756,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           .json({ message: "Already submitted to this contest" });
       }
 
+        type ContestEntryInsert = {
+  contestId: number;
+  modelId: number;
+  title: string;
+  description: string;
+  photoUrl: string;
+  status: string;
+};
+
       // ✅ CORRECT image path
       const photoUrl = `/uploads/${req.file.filename}`;
 
@@ -764,10 +773,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         modelId: model.id,
         title,
         description,
-        photo_url: photoUrl, // DB column (snake_case)
+        photoUrl,
         status: "pending",
       });
-
+        // 🔥 ADD THIS LINE RIGHT HERE
+      console.log("🎯 Saved entry:", entry);
+      
+      // ✅ ONE-LINE PROOF
+console.log("📸 DB INSERT CONFIRMED → id:", entry.id, "| photo_url:", entry.photoUrl);
+      
       res.json({
         message: "Photo submitted successfully",
         entry: {

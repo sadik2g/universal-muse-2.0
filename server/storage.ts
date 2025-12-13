@@ -277,15 +277,26 @@ export class DatabaseStorage implements IStorage {
 
   // Contest Entries - Enhanced with proper submission data
   async createContestEntry(entry: InsertContestEntry): Promise<ContestEntry> {
-    const entryData = {
-      ...entry,
-      votes: 0,
-      submittedAt: new Date(),
-      status: entry.status || "pending"
-    };
-    const [newEntry] = await db.insert(contestEntries).values(entryData).returning();
-    return newEntry;
-  }
+  const entryData = {
+    contestId: entry.contestId,
+    modelId: entry.modelId,
+    title: entry.title,
+    description: entry.description,
+    photo_url: entry.photoUrl, // ← map camelCase to snake_case
+    votes: 0,
+    submittedAt: new Date(),
+    status: entry.status || "pending"
+  };
+
+  console.log("🟢 INSERT ENTRY DATA:", entryData); // 👈 log payload
+
+  const [newEntry] = await db.insert(contestEntries).values(entryData).returning();
+
+  console.log("📸 INSERTED ENTRY PHOTO_URL:", newEntry.photo_url); // 👈 prove DB insert
+
+  return newEntry;
+}
+
 
   async getSubmissionsByModelId(modelId: number): Promise<any[]> {
     const results = await db.select({
