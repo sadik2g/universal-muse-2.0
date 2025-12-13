@@ -11,10 +11,8 @@ import { Camera, Upload, Clock, Send, CheckCircle, X } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
-
+import { Label } from "recharts";
 import { ASSETS_URL } from "@/var";
-import { Label } from "@/components/ui/label";
-
 
 const submitPhotoSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -32,7 +30,7 @@ interface SubmitPhotoModalProps {
 
 export default function SubmitPhotoModal({ isOpen, onClose, contest }: SubmitPhotoModalProps) {
   const [isUploading, setIsUploading] = useState(false);
- const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -113,15 +111,11 @@ export default function SubmitPhotoModal({ isOpen, onClose, contest }: SubmitPho
         throw new Error("Upload failed");
       }
 
-     const result = await response.json();
+      const result = await response.json();
 
-// result.url = "/uploads/image-123.jpg"
-const filename = result.url.replace("/uploads/", "");
-
-setUploadedFile(filename);
-form.setValue("photoUrl", filename);
-
-
+      const imageUrl = result.url;
+      setUploadedFile(imageUrl);
+      form.setValue("photoUrl", imageUrl);
 
       toast({
         title: "Success",
@@ -184,11 +178,10 @@ form.setValue("photoUrl", filename);
                         type="button"
                         variant="outline"
                         size="sm"
-                       onClick={() => {
-                        setUploadedFile(null);
-                        form.setValue("photoUrl", "");
-                      }}
-
+                        onClick={() => {
+                          handleImageUpload(new File([], ""));
+                          form.setValue("photoUrl", "");
+                        }}
                       >
                         <X className="h-4 w-4 mr-1" />
                         Remove

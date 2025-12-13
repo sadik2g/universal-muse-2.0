@@ -12,8 +12,6 @@ import SubmitPhotoModal from "@/components/modals/submit-photo-modal";
 import { useAuth } from "@/hooks/useAuth";
 import { fadeInUp, staggerChildren } from "@/lib/animations";
 import { Link } from "wouter";
-import { ASSETS_URL } from "@/var"; // make sure this path is correct
-
 
 export default function ContestDetail() {
   const { id } = useParams();
@@ -101,11 +99,11 @@ export default function ContestDetail() {
       {/* Contest Header */}
       <section className="relative py-12 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 overflow-hidden">
         <div className="absolute inset-0">
-         <img
-          src={`${ASSETS_URL}${contest.image}`}
-          alt={contest.title}
-          className="w-full h-full object-cover opacity-30"
-        />
+          <img
+            src={contest.image}
+            alt={contest.title}
+            className="w-full h-full object-cover opacity-30"
+          />
           <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-black/40"></div>
         </div>
         

@@ -2,8 +2,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Trophy, Users, DollarSign, Clock } from "lucide-react";
-import { ASSETS_URL } from "@/var";
-
 
 interface ViewContestModalProps {
   isOpen: boolean;
@@ -41,19 +39,6 @@ export default function ViewContestModal({ isOpen, onClose, contest }: ViewConte
             Contest Details
           </DialogTitle>
         </DialogHeader>
-        
-      {/* Contest Banner */}
-{contest.bannerImage && (
-  <div className="w-full h-56 rounded-lg overflow-hidden border mb-6">
-    <img
-      src={`${ASSETS_URL}${contest.bannerImage}`}
-      alt="Contest banner"
-      className="w-full h-full object-cover"
-    />
-  </div>
-)}
-
-
 
         <div className="space-y-6">
           {/* Contest Header */}

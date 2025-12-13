@@ -77,41 +77,40 @@ const PgSession = connectPg(session);
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Configure multer for file uploads
- const uploadDir = "/uploads";
+  const uploadDir = path.join(process.cwd(), 'uploads');
   if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-  console.log("Created /uploads directory");
-}
-
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
 
   const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, uploadDir);
+    storage: multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, uploadDir);
+      },
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+      }
+    }),
+    fileFilter: (req, file, cb) => {
+      const allowedTypes = /jpeg|jpg|png|gif/;
+      const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+      const mimetype = allowedTypes.test(file.mimetype);
+
+      if (mimetype && extname) {
+        return cb(null, true);
+      } else {
+        cb(new Error('Only image files are allowed!'));
+      }
     },
-    filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    limits: {
+      fileSize: 5 * 1024 * 1024, // 5MB limit
     }
-  }),
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
+  });
 
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed!'));
-    }
-  },
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
-  }
-});
 
-// Serve uploaded files
-app.use("/uploads", express.static(uploadDir));
+  // Serve uploaded files
+  app.use('/uploads', express.static(uploadDir));
 
   // Configure session middleware
   app.use(session({
@@ -276,48 +275,50 @@ app.use("/uploads", express.static(uploadDir));
     }
   });
 
-  app.post("/api/contest-entries", requireAuth, upload.single('image'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: "No image uploaded" });
+  app.post("/api/upload/profile", requireAuth, upload.single('image'), (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+      // Return the URL path to the uploaded file
+      const fileUrl = `/uploads/${req.file.filename}`;
+      res.json({ url: fileUrl });
+    } catch (error) {
+      console.error("Profile upload error:", error);
+      res.status(500).json({ error: 'Failed to upload profile picture' });
     }
+  });
 
-    const userId = (req.session as any).userId;
-    const { contestId, title, description } = req.body;
+  // Profile update endpoint
+  app.put("/api/profile/update", requireAuth, async (req, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      const model = await storage.getModelByUserId(userId);
 
-    const model = await storage.getModelByUserId(userId);
-    if (!model) return res.status(404).json({ message: "Model profile not found" });
+      if (!model) {
+        return res.status(404).json({ message: "Model profile not found" });
+      }
 
-    const contest = await storage.getContestById(contestId);
-    if (!contest) return res.status(404).json({ message: "Contest not found" });
+      const { name, stageName, bio, location, instagramHandle, profileImage } = req.body;
 
-    const existingEntry = await storage.getContestEntryByModelAndContest(model.id, contestId);
-    if (existingEntry) {
-      return res.status(400).json({ message: "You already submitted to this contest" });
+      const updatedModel = await storage.updateModel(model.id, {
+        name,
+        stageName,
+        bio,
+        location,
+        instagramHandle,
+        profileImage,
+      });
+
+      res.json({
+        message: "Profile updated successfully",
+        model: updatedModel
+      });
+    } catch (error) {
+      console.error("Profile update error:", error);
+      res.status(500).json({ message: "Failed to update profile" });
     }
-
-    const photoUrl = `/uploads/${req.file.filename}`;
-
-    const entry = await storage.createContestEntry({
-      contestId,
-      modelId: model.id,
-      title,
-      description,
-      photoUrl,
-      status: "pending",
-    });
-
-    res.json({
-      message: "Photo submitted successfully",
-      entry
-    });
-
-  } catch (error) {
-    console.error("Submit entry error:", error);
-    res.status(500).json({ message: "Failed to submit entry" });
-  }
-});
-
+  });
 
   // My submissions endpoint with pagination
   app.get("/api/my-submissions", requireAuth, async (req, res) => {
@@ -716,10 +717,11 @@ app.use("/uploads", express.static(uploadDir));
   });
 
   // Submit contest entry
-  app.post("/api/contest-entries", requireAuth, upload.single('image'), async (req, res) => {
+  app.post("/api/contest-entries", requireAuth, async (req, res) => {
     try {
       console.log("Contest entry submission received:", req.body);
       const { contestId, title, description, photoUrl } = req.body;
+      upload.single('image')
       const fileUrl = `/uploads/${photoUrl}`;
 
       if (!contestId || !title || !description || !photoUrl) {
