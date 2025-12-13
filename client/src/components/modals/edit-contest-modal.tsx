@@ -149,9 +149,13 @@ export default function EditContestModal({ isOpen, onClose, contest }: EditConte
 
       const result = await response.json();
 
-      const imageUrl = result.url;
-      setUploadedImageUrl(imageUrl);
-      form.setValue("bannerImage", imageUrl);
+     const rawUrl = result.url;
+
+// extract filename only
+const filename = rawUrl.split("/").pop();
+
+setUploadedImageUrl(filename);
+form.setValue("bannerImage", filename);
 
       toast({
         title: "Success",
@@ -238,17 +242,12 @@ export default function EditContestModal({ isOpen, onClose, contest }: EditConte
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
                   {uploadedImageUrl ? (
                     <div className="space-y-2">
-                     <img
-                      src={
-                        uploadedImageUrl.startsWith("http")
-                          ? uploadedImageUrl
-                          : uploadedImageUrl.startsWith("/uploads")
-                            ? `https://universal-muse-2-0.onrender.com${uploadedImageUrl}`
-                            : `${ASSETS_URL}${uploadedImageUrl}`
-                      }
-                      alt="Banner preview"
-                      className="w-full h-32 object-cover rounded-lg"
-                    />
+                    <img
+  src={`${ASSETS_URL}${uploadedImageUrl}`}
+  alt="Banner preview"
+  className="w-full h-32 object-cover rounded-lg"
+/>
+
 
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-green-600">Image uploaded successfully</span>

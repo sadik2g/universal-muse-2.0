@@ -226,7 +226,7 @@ export default function CreateContestModal({ isOpen, onClose }: CreateContestMod
                   {uploadedImageUrl ? (
                     <div className="space-y-2">
                      <img
-                      src={buildImageUrl(uploadedImageUrl)}
+                      src={`${ASSETS_URL}${uploadedImageUrl}`}
                       alt="Banner preview"
                       className="w-full h-32 object-cover rounded-lg"
                     />
