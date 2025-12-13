@@ -722,7 +722,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Contest entry submission received:", req.body);
       const { contestId, title, description, photoUrl } = req.body;
       upload.single('image')
-      const fileUrl = `/uploads/${photoUrl}`;
+      photo_url: `/uploads/${req.file.filename}`, // matches DB column
+
 
       if (!contestId || !title || !description || !photoUrl) {
         console.log("Missing required fields:", { contestId, title, description, photoUrl });
@@ -755,19 +756,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         modelId: model.id,
         title,
         description,
-        photoUrl,
+        photo_url: `/uploads/${req.file.filename}`, // ✅ match DB column
         status: "pending",
       });
 
-      res.json({
-        message: "Photo submitted successfully! It will be reviewed by our team.",
-        entry: {
-          id: entry.id,
-          title: entry.title,
-          status: entry.status,
-          submittedAt: entry.submittedAt?.toISOString(),
-        }
-      });
+         res.json({
+      message: "Photo submitted successfully! It will be reviewed by our team.",
+      entry: {
+        id: entry.id,
+        title: entry.title,
+        status: entry.status,
+        submittedAt: entry.submittedAt?.toISOString(),
+        photoUrl: `/uploads/${req.file.filename}`, // frontend still expects camelCase
+      }
+    });
+
     } catch (error) {
       console.error("Submit entry error:", error);
       res.status(500).json({ message: "Failed to submit photo" });
@@ -1212,7 +1215,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             id: contestEntries.id,
             modelId: contestEntries.modelId,
             title: contestEntries.title,
-            photoUrl: contestEntries.photoUrl,
+            photoUrl: entry.photo_url, // ✅ map DB field
             votes: contestEntries.votes,
           })
           .from(contestEntries)
@@ -1272,7 +1275,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               modelId: winnerEntry.modelId,
               entryId: winnerEntry.id,
               title: winnerEntry.title,
-              photoUrl: winnerEntry.photoUrl,
+              photoUrl: winnerEntry.photo_url, // ✅ use DB column
               votes: winnerEntry.votes,
               ranking: 1,
             },
@@ -1287,7 +1290,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               modelId: entry.modelId,
               entryId: entry.id,
               title: entry.title,
-              photoUrl: entry.photoUrl,
+              photoUrl: entry.photo_url
               votes: entry.votes,
             })),
           });
