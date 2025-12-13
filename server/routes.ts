@@ -1224,7 +1224,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             id: contestEntries.id,
             modelId: contestEntries.modelId,
             title: contestEntries.title,
-            photoUrl: entry.photo_url, // ✅ map DB field
+            //photoUrl: entry.photo_url, // ✅ map DB field
+            photoUrl: contestEntries.photo_url, // ✅ correct
             votes: contestEntries.votes,
           })
           .from(contestEntries)
@@ -1299,7 +1300,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               modelId: entry.modelId,
               entryId: entry.id,
               title: entry.title,
-              photoUrl: entry.photo_url
+              photoUrl: entry.photo_url,
               votes: entry.votes,
             })),
           });
