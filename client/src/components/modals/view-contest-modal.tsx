@@ -39,6 +39,22 @@ export default function ViewContestModal({ isOpen, onClose, contest }: ViewConte
             Contest Details
           </DialogTitle>
         </DialogHeader>
+        
+       {/* Contest Banner */}
+{contest.image && (
+  <div className="w-full h-56 rounded-lg overflow-hidden border mb-6">
+    <img
+      src={
+        contest.image.startsWith("http")
+          ? contest.image
+          : `https://universal-muse-2-0.onrender.com${contest.image}`
+      }
+      alt="Contest banner"
+      className="w-full h-full object-cover"
+    />
+  </div>
+)}
+
 
         <div className="space-y-6">
           {/* Contest Header */}

@@ -113,9 +113,11 @@ export default function SubmitPhotoModal({ isOpen, onClose, contest }: SubmitPho
 
       const result = await response.json();
 
-      const imageUrl = result.url;
-      setUploadedFile(imageUrl);
-      form.setValue("photoUrl", imageUrl);
+      const filename = imageUrl.replace("uploads/", "").replace("/uploads/", "");
+
+      setUploadedFile(filename);
+      form.setValue("photoUrl", filename);
+
 
       toast({
         title: "Success",
@@ -178,10 +180,11 @@ export default function SubmitPhotoModal({ isOpen, onClose, contest }: SubmitPho
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => {
-                          handleImageUpload(new File([], ""));
-                          form.setValue("photoUrl", "");
-                        }}
+                       onClick={() => {
+                        setUploadedFile(null);
+                        form.setValue("photoUrl", "");
+                      }}
+
                       >
                         <X className="h-4 w-4 mr-1" />
                         Remove
