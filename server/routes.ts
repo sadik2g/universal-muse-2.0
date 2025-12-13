@@ -717,65 +717,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Submit contest entry
-  app.post("/api/contest-entries", requireAuth, async (req, res) => {
+ app.post(
+  "/api/contest-entries",
+  requireAuth,
+  upload.single("image"),
+  async (req, res) => {
     try {
-      console.log("Contest entry submission received:", req.body);
-      const { contestId, title, description, photoUrl } = req.body;
-      upload.single('image')
-      photo_url: `/uploads/${req.file.filename}`, // matches DB column
+      const { contestId, title, description } = req.body;
 
+      if (!req.file) {
+        return res.status(400).json({ message: "Image is required" });
+      }
 
-      if (!contestId || !title || !description || !photoUrl) {
-        console.log("Missing required fields:", { contestId, title, description, photoUrl });
+      if (!contestId || !title || !description) {
         return res.status(400).json({ message: "All fields are required" });
       }
 
-      // Get the model for the current user
       const userId = (req.session as any).userId;
-      console.log("User ID from session:", userId);
       const model = await storage.getModelByUserId(userId);
-      console.log("Model found:", model ? "Yes" : "No");
       if (!model) {
         return res.status(404).json({ message: "Model profile not found" });
       }
 
-      // Check if contest exists and is active
       const contest = await storage.getContestById(contestId.toString());
       if (!contest) {
         return res.status(404).json({ message: "Contest not found" });
       }
 
-      // Check if model already submitted to this contest
-      const existingEntry = await storage.getContestEntryByModelAndContest(model.id, contestId);
+      const existingEntry =
+        await storage.getContestEntryByModelAndContest(
+          model.id,
+          Number(contestId)
+        );
+
       if (existingEntry) {
-        return res.status(400).json({ message: "You have already submitted to this contest" });
+        return res
+          .status(400)
+          .json({ message: "Already submitted to this contest" });
       }
 
+      // ✅ CORRECT image path
+      const photoUrl = `/uploads/${req.file.filename}`;
+
       const entry = await storage.createContestEntry({
-        contestId,
+        contestId: Number(contestId),
         modelId: model.id,
         title,
         description,
-        photo_url: `/uploads/${req.file.filename}`, // ✅ match DB column
+        photo_url: photoUrl, // DB column (snake_case)
         status: "pending",
       });
 
-         res.json({
-      message: "Photo submitted successfully! It will be reviewed by our team.",
-      entry: {
-        id: entry.id,
-        title: entry.title,
-        status: entry.status,
-        submittedAt: entry.submittedAt?.toISOString(),
-        photoUrl: `/uploads/${req.file.filename}`, // frontend still expects camelCase
-      }
-    });
-
+      res.json({
+        message: "Photo submitted successfully",
+        entry: {
+          id: entry.id,
+          title: entry.title,
+          status: entry.status,
+          submittedAt: entry.submittedAt?.toISOString(),
+          photoUrl, // frontend (camelCase)
+        },
+      });
     } catch (error) {
       console.error("Submit entry error:", error);
       res.status(500).json({ message: "Failed to submit photo" });
     }
-  });
+  }
+);
+
 
   // Contact form - creates complaints
   app.post("/api/contact", async (req, res) => {
