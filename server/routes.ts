@@ -780,7 +780,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("🎯 Saved entry:", entry);
       
       // ✅ ONE-LINE PROOF
-console.log("📸 DB INSERT CONFIRMED → id:", entry.id, "| photo_url:", entry.photoUrl);
+      console.log("📸 DB INSERT CONFIRMED → id:", entry.id, "| photo_url:", entry.photoUrl);
       
       res.json({
         message: "Photo submitted successfully",
